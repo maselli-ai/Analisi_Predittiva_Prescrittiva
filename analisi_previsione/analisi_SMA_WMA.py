@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ---------------------------
+
 # 1) Parametri e percorsi
-# ---------------------------
+
 HERE = Path(__file__).resolve().parent
 DATASET = HERE.parent / "dataset_finale_ETL_QA.xlsx"  # <— adatto al tuo progetto; cambia se serve
 OUT_DIR = HERE.parent / "output_311"                  # cartella out (coerente con tua struttura)
@@ -21,9 +21,9 @@ MONTH_NUM = {m:i+1 for i,m in enumerate(MONTH_ORDER)}
 # scelgo 2–3 articoli pilota (puoi aggiungere/togliere liberamente)
 ARTICOLI_PILOTA = ["SLP3100", "SLISO180", "SLI749"]
 
-# ---------------------------
+
 # 2) Utilità metriche
-# ---------------------------
+
 def mae(y_true, y_pred):
     mask = (~y_true.isna()) & (~y_pred.isna())
     return float(np.mean(np.abs(y_true[mask] - y_pred[mask])))
@@ -105,9 +105,8 @@ for code in ARTICOLI_PILOTA:
     plt.savefig(OUT_PLOTS / f"{code}_SMA_WMA.png", dpi=150)
     plt.close()
 
-# ---------------------------
 # 6) Tabella performance
-# ---------------------------
+
 perf = pd.DataFrame(rows)
 perf = perf[["articolo","modello","MAE","MAPE(%)","RMSE"]]
 
@@ -118,3 +117,4 @@ perf.to_csv(OUT_DIR / "SMA_WMA_performance.csv", index=False)
 print("\nFile creati:")
 print(" - Grafici:", OUT_PLOTS)
 print(" - Tabella performance:", OUT_DIR / "SMA_WMA_performance.xlsx")
+
