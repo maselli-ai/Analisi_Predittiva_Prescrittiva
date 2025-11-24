@@ -31,7 +31,7 @@ to_be = (to_be[["code","D_media","L_giorni","sigma_D_unita","sigma_L_giorni","SS
          .rename(columns={"SS":"SS_to_be","ROP":"ROP_to_be"}))
 to_be["code"] = to_be["code"].astype(str).str.strip()
 
-# ---------- As-Is simulato (nessun file esterno) ----------
+# As-Is simulato (nessun file esterno) 
 # Politica attuale semplificata: riordino a D*L, senza scorta di sicurezza
 as_is = to_be[["code","D_media","L_giorni"]].copy()
 as_is["ROP_as_is"] = as_is["D_media"] * as_is["L_giorni"]
@@ -65,7 +65,7 @@ if PILOT_CODES:
 else:
     pilots = df.sort_values("ROP_to_be", ascending=False).head(3).copy()
 
-# ---------- Grafico 1: barre ROP As-Is vs To-Be ----------
+# Grafico 1: barre ROP As-Is vs To-Be 
 plt.figure(figsize=(10,6))
 idx = np.arange(len(pilots))
 width = 0.38
@@ -79,7 +79,7 @@ plt.tight_layout()
 plt.savefig(PLOTS_DIR / "ROP_AsIs_vs_ToBe_pilota.png", dpi=300, bbox_inches="tight")
 plt.close()
 
-# ---------- Grafico 2: scomposizione ROP To-Be (D×L + SS) ----------
+# Grafico 2: scomposizione ROP To-Be (D×L + SS)
 plt.figure(figsize=(10,6))
 comp_DL = pilots["D_media"] * pilots["L_giorni"]
 comp_SS = pilots["SS_to_be"]
@@ -92,7 +92,7 @@ plt.tight_layout()
 plt.savefig(PLOTS_DIR / "ROP_ToBe_scomposizione_pilota.png", dpi=300, bbox_inches="tight")
 plt.close()
 
-# ---------- Grafico 3: variazione percentuale del ROP ----------
+# Grafico 3: variazione percentuale del ROP 
 plt.figure(figsize=(10,6))
 plt.bar(pilots["code"].astype(str), pilots["delta_ROP_%"])
 plt.axhline(0, color="black", linewidth=0.8)
@@ -103,3 +103,4 @@ plt.savefig(PLOTS_DIR / "ROP_delta_percent_pilota.png", dpi=300, bbox_inches="ti
 plt.close()
 
 print("Grafici salvati in:", PLOTS_DIR)
+
