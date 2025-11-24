@@ -5,25 +5,24 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-# -------------------------
+
 # Output
-# -------------------------
+
 OUT_DIR = Path("../output_311")
 PLOTS_DIR = OUT_DIR / "grafici_prescrittivi"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
-# -------------------------
+
 # File e colonne (ETL domanda)
-# -------------------------
+
 FILE_DEMAND  = "../dataset_finale_ETL_QA.xlsx"
 COL_ART_DEM  = "code"
 COL_MESE_TXT = "mese_rif"
 COL_DEMAND   = "outgoing"
 
-# -------------------------
 # File e colonne (acquisti)
-# -------------------------
+
 FILE_PURCH   = "C:/Users/Stefania Maselli/Desktop/Analisi_predittiva/acquisti_2025.xlsx"
 COL_ART_PUR  = "Cod.Art. No Var."
 COL_ORDER    = "Data Doc."
@@ -34,9 +33,8 @@ COL_LT_DAYS  = "lead_time_days"  # se assente lo calcolo
 MIN_MONTHS_DEMAND = 4
 MIN_ORDERS_LT     = 3
 
-# -------------------------
 # Utility
-# -------------------------
+
 mesi_map = {
     "GENNAIO":1,"FEBBRAIO":2,"MARZO":3,"APRILE":4,"MAGGIO":5,"GIUGNO":6,
     "LUGLIO":7,"AGOSTO":8,"SETTEMBRE":9,"OTTOBRE":10,"NOVEMBRE":11,"DICEMBRE":12
@@ -47,9 +45,8 @@ def to_numeric_series(s: pd.Series) -> pd.Series:
         s = s.str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
     return pd.to_numeric(s, errors="coerce")
 
-# -------------------------
-# 1) Domanda → sigma_D per articolo
-# -------------------------
+# 1) Domanda: sigma_D per articolo
+
 dem = pd.read_excel(FILE_DEMAND, decimal=",")
 dem[COL_DEMAND] = to_numeric_series(dem[COL_DEMAND])
 
@@ -73,9 +70,9 @@ agg_demand = (
 )
 agg_demand.loc[agg_demand["n_mesi_domanda"] < MIN_MONTHS_DEMAND, "sigma_D_unita"] = np.nan
 
-# -------------------------
-# 2) Acquisti → L e sigma_L per articolo
-# -------------------------
+
+# 2) Acquisti: L e sigma_L per articolo
+
 purch = pd.read_excel(FILE_PURCH)
 
 missing = [c for c in [COL_ART_PUR, COL_ORDER, COL_RECEIPT] if c not in purch.columns]
@@ -109,9 +106,9 @@ agg_lt = (
 )
 agg_lt.loc[agg_lt["n_ordini"] < MIN_ORDERS_LT, ["L_giorni", "sigma_L_giorni"]] = np.nan
 
-# -------------------------
+
 # 3) Merge ed export
-# -------------------------
+
 agg_demand = agg_demand.rename(columns={COL_ART_DEM: "code"})
 agg_demand["code"] = agg_demand["code"].astype(str).str.strip()
 
@@ -126,9 +123,9 @@ fp_tab = OUT_DIR / "Tabella_L_sigmaL_sigmaD.xlsx"
 tab.to_excel(fp_tab, index=False)
 print("Creato:", fp_tab)
 
-# -------------------------
+
 # 4) Grafici lead time complessivi
-# -------------------------
+
 plt.figure(figsize=(10, 5))
 plt.hist(purch["lt_days"].dropna(), bins=20)
 plt.title("Distribuzione dei lead time (giorni)")
@@ -147,3 +144,4 @@ plt.savefig(PLOTS_DIR / "lead_time_box.png", dpi=300, bbox_inches="tight", pad_i
 plt.close()
 
 print("Grafici salvati in:", PLOTS_DIR)
+
