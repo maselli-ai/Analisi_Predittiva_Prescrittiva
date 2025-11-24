@@ -25,12 +25,12 @@ for c in ["L_giorni", "sigma_L_giorni", "sigma_D_unita", "D_media", "SS", "ROP"]
     if c in df.columns:
         df[c] = df[c].round(2)
 
-# Salva tabella finale
+# Salvo tabella finale
 fp_tab = OUT_DIR / "ROP_per_articolo.xlsx"
 df.to_excel(fp_tab, index=False)
 print("Tabella ROP creata:", fp_tab)
 
-# Selezione articoli pilota
+# Seleziono articoli pilota
 if PILOT_CODES:
     pilots = df[df["code"].astype(str).isin(PILOT_CODES)].copy()
 else:
@@ -57,3 +57,4 @@ plt.savefig(PLOTS_DIR / "ROP_vs_Demand.png", dpi=300, bbox_inches="tight")
 plt.close()
 
 print("Grafici salvati in:", PLOTS_DIR)
+
